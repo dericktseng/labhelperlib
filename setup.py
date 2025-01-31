@@ -1,4 +1,4 @@
-from setuptools import setup, find_packages
+from setuptools import setup
 
 setup(
     name='labhelperlib',
@@ -6,12 +6,13 @@ setup(
     description='helper functions for my personal lab work',
     author='Derick Tseng',
     author_email='derickwtseng@berkeley.edu',
-    packages=find_packages(),
-    requires=[
-        'numpy==1.26.4',
+    packages=['labhelperlib', 'labhelperlib.tem', 'labhelperlib.raman'],
+    install_requires=[
+        'numpy>1.0, <2.0',
         'pandas',
         'scipy',
         'matplotlib',
-        'ncempy'
+        'ncempy',
+        'pillow'
     ],
 )

@@ -5,25 +5,9 @@ import numpy as np
 import pandas as pd
 from scipy import fft
 from matplotlib import pyplot as plt
+from . import tem_helper
 
-def unit_multiplier(given, convert):
-    """
-    given - original units (e.g. 'c' for cm)
-    convert - new units (e.g. 'u' for um)
-    empty string for just 'm'
-    """
-    units = {
-        'M':  6,
-        'K':  3,
-        '' :  0,
-        'c': -2,
-        'm': -3,
-        'u': -6,
-        'n': -9,
-        'p': -12
-    }
-    return 10**(units[given] - units[convert])
-
+__all__ = ['transfer_scalebar_metadata', 'get_spacing']
 
 def transfer_scalebar_metadata(ser_file: Path, tiff_file=None, scalebar_units='n'):
     """
@@ -40,7 +24,7 @@ def transfer_scalebar_metadata(ser_file: Path, tiff_file=None, scalebar_units='n
     pixelsize = ser_data['pixelSize'][0]
     pixelUnit = ser_data['pixelUnit'][0]
     givenunits = pixelUnit.rsplit('m', 1)[0]
-    multiplier = unit_multiplier(givenunits, scalebar_units)
+    multiplier = tem_helper.unit_multiplier(givenunits, scalebar_units)
     resolution = 1 / (pixelsize * multiplier)
 
     imageDescription = (270, f'ImageJ=1.54m\nunit={scalebar_units}m\n')
