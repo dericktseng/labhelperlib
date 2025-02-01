@@ -6,8 +6,6 @@ from matplotlib import colors
 import cycler
 from . import raman_helper as rh
 
-__all__ = ['plot_polarized']
-
 def plot_polarized(datafile: Path,
          peaks: dict[str, tuple[float,float]],
          savefile=None,
