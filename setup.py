@@ -13,6 +13,7 @@ setup(
         'scipy',
         'matplotlib',
         'ncempy',
-        'pillow'
+        'pillow',
+        'pybaselines'
     ],
 )

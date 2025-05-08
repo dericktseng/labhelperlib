@@ -1,18 +1,31 @@
 import numpy as np
 
-def nearest_index(arr: np.ndarray, n):
+def nearest_index(arr: np.ndarray, n: float):
     """ Returns the index of the number in `arr` closest to `n` """
     diff_arr = np.abs(arr - n)
     return np.argmin(diff_arr)
 
-def max_in_range(x_arr: np.ndarray, y_arr: np.ndarray, low, hi):
+def max_in_range(x_arr: np.ndarray,
+                 y_arr: np.ndarray,
+                 low: float,
+                 hi: float):
+    """
+    Returns the index of the max item in a specific range of given plot.
+    x_arr: x values to check range
+    y_arr: y values to check maximum
+    low: lower limit of range
+    hi: upper limit of range
+    """
     low_i = nearest_index(x_arr, low)
     hi_i = nearest_index(x_arr, hi)
     check_arr = y_arr[low_i:hi_i + 1]
     max_i = np.argmax(check_arr)
     return max_i + low_i
 
-def integrate_in_range(x_arr: np.ndarray, y_arr: np.ndarray, low, hi):
+def integrate_in_range(x_arr: np.ndarray,
+                       y_arr: np.ndarray,
+                       low: float,
+                       hi: float):
     """
     Returns the integral of the function defined by x_arr, y_arr
     in the range (low, hi)
@@ -39,11 +52,14 @@ def generate_posts(points):
     padded = np.concatenate([[frontpad], points, [backpad]])
     return (padded[1:] + padded[:-1]) / 2
 
-def cut(x_arr: np.ndarray, y_arr: np.ndarray, cut_range: tuple[float,float]):
+def cut(x_arr: np.ndarray,
+        y_arr: np.ndarray,
+        low: float,
+        hi: float):
     """
     Returns a tuple (x_arr, y_arr) where the all datapoints in the
-    new x_arr is between cut_range[0] and cut_range[1], and y_arr
+    new x_arr is between low and hi, and y_arr
     is cut to the same range.
     """
-    sel_range = np.logical_and(cut_range[0] < x_arr, x_arr < cut_range[1])
+    sel_range = np.logical_and(low < x_arr, x_arr < hi)
     return x_arr[sel_range], y_arr[sel_range]
