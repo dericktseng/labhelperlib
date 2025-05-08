@@ -38,3 +38,12 @@ def generate_posts(points):
     backpad = points[-1] + (points[-1] - points[-2])
     padded = np.concatenate([[frontpad], points, [backpad]])
     return (padded[1:] + padded[:-1]) / 2
+
+def cut(x_arr: np.ndarray, y_arr: np.ndarray, cut_range: tuple[float,float]):
+    """
+    Returns a tuple (x_arr, y_arr) where the all datapoints in the
+    new x_arr is between cut_range[0] and cut_range[1], and y_arr
+    is cut to the same range.
+    """
+    sel_range = np.logical_and(cut_range[0] < x_arr, x_arr < cut_range[1])
+    return x_arr[sel_range], y_arr[sel_range]

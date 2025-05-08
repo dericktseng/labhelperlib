@@ -8,7 +8,7 @@ setup(
     author_email='derickwtseng@berkeley.edu',
     packages=['labhelperlib', 'labhelperlib.tem', 'labhelperlib.raman'],
     install_requires=[
-        'numpy>1.0, <2.0',
+        'numpy',
         'pandas',
         'scipy',
         'matplotlib',
