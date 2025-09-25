@@ -95,6 +95,7 @@ def plot_polarized(datafile: Path,
     fig_heat.colorbar(colorbar, ax=ax_heat)
     ax_heat.set_xlabel(r'Raman Shift ($[\mathrm{cm}^{-1}]$)')
     ax_heat.set_ylabel('Polarization angle')
+    ax_heat.set_yticks(np.linspace(0, 360, 7, endpoint=True))
 
     # draws vertical line guides on the heatmap
     # additionally draws the polar plots
@@ -112,7 +113,8 @@ def plot_polarized(datafile: Path,
 
         # draws the polar plots as well
         ax = plt.subplot(1, len(peaks), i+1, polar=True)
-        ax.set_yticklabels([])
+        # ax.set_yticklabels([])
+        ax.grid(True)
         
         # normalizes integrated intensities
         integrated_intensities = rh.integrate_in_range(ramanshift, intensitymap, *peakrange)
