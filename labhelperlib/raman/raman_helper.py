@@ -1,5 +1,15 @@
 import numpy as np
 
+def gauss(x, a, b, c):
+    # FWHM: 2 * sqrt(2 * ln(2)) * c
+    return a * np.exp(-(x-b)**2 / (2*c**2))
+
+def gauss_data(a,b,c):
+    fwhm = abs(2 * np.sqrt(2 * np.log(2)) * c)
+    height = a
+    pos = b
+    return pos, fwhm, height
+
 def nearest_index(arr: np.ndarray, n: float):
     """ Returns the index of the number in `arr` closest to `n` """
     diff_arr = np.abs(arr - n)

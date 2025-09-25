@@ -8,14 +8,13 @@ from typing import Tuple
 import pybaselines
 from . import raman_helper as rh
 
-def plot(datafile: Path,
-         savefile: Path|None = None,
-         cutrange: Tuple[float,float]|None = None,
-         rm_baseline: bool = False,
-         **kwargs):
+def read_data(datafile: Path,
+              cutrange: Tuple[float,float]|None = None,
+              rm_baseline: bool = False):
     """
-    Plots the given Raman data given an optional range to plot.
-    if savefile is given, then saves the figure.
+    reads data in from given datafile.
+    Extracts data within cutrange if given
+    removes baselines if rm_baseline=True
     """
     shift, intensity = np.loadtxt(datafile).T
 
@@ -27,9 +26,23 @@ def plot(datafile: Path,
         bg, _ = baseline.psalsa(intensity)
         intensity -= bg
 
+    return shift, intensity
+
+
+def plot(datafile: Path,
+         savefile: Path|None = None,
+         cutrange: Tuple[float,float]|None = None,
+         rm_baseline: bool = False,
+         **kwargs):
+    """
+    Plots the given Raman data given an optional range to plot.
+    if savefile is given, then saves the figure.
+    """
+    shift, intensity = read_data(datafile, cutrange, rm_baseline)
+
     fig, ax = plt.subplots(1, 1)
     ax.plot(shift, intensity)
-    ax.set_xlabel(r'Raman shift $[cm^{-1}]$')
+    ax.set_xlabel(r'Raman shift $[\mathrm{cm}^{-1}]$')
     ax.set_ylabel(r'Intensity')
 
     if savefile is not None:
@@ -80,7 +93,7 @@ def plot_polarized(datafile: Path,
     pol_posts = rh.connect_final_init_pt(pol_uniq, 360)
     colorbar = ax_heat.pcolormesh(ramanshift_posts, pol_posts, intensitymap)
     fig_heat.colorbar(colorbar, ax=ax_heat)
-    ax_heat.set_xlabel(r'Raman Shift ($cm^{-1}$)')
+    ax_heat.set_xlabel(r'Raman Shift ($[\mathrm{cm}^{-1}]$)')
     ax_heat.set_ylabel('Polarization angle')
 
     # draws vertical line guides on the heatmap
