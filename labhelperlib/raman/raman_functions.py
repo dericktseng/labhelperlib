@@ -54,8 +54,10 @@ def plot(datafile: Path,
 def plot_polarized(datafile: Path,
                    peaks: dict[str, tuple[float,float]],
                    savefile=None,
-                   vertical=True,
-                   connect_final=False,
+                   vertical: bool = True,
+                   connect_final: bool = False,
+                   rm_baseline: bool = False,
+                   rm_baseline_lam: float = 1e5,
                    **kwargs) -> tuple[Figure, Figure]:
     """
     datafile - Path to the polarized raman txt file to process.
@@ -67,6 +69,8 @@ def plot_polarized(datafile: Path,
         }
     savefile - location to save file, or None if we don't want to.
     vertical - plots vertical guides on heatmap if True.
+    connect_final - whether we want to connect final and initial points in polar plots
+    rm_baseline - whether we want to remove baseline (uses psalsa whittaker from pybaselines)
     returns: matplotlib figures for heatmap and polar plot.
     """
 
@@ -89,6 +93,16 @@ def plot_polarized(datafile: Path,
     # plots the intensity map
     intensitymap = pol_sections[:,:,2]
     ramanshift = pol_sections[0,:,1]
+
+    if rm_baseline:
+        baseline_fitter = pybaselines.Baseline(x_data=ramanshift)
+        bkgs_fitters = (
+            baseline_fitter.psalsa(spectrum.ravel(), lam=rm_baseline_lam)
+            for spectrum in intensitymap
+        )
+        bkgs = np.array([data[0] for data in bkgs_fitters])
+        intensitymap -= bkgs
+
     ramanshift_posts = rh.generate_posts(ramanshift)
     pol_posts = rh.connect_final_init_pt(pol_uniq, 360)
     colorbar = ax_heat.pcolormesh(ramanshift_posts, pol_posts, intensitymap)
@@ -115,7 +129,7 @@ def plot_polarized(datafile: Path,
         ax = plt.subplot(1, len(peaks), i+1, polar=True)
         # ax.set_yticklabels([])
         ax.grid(True)
-        
+
         # normalizes integrated intensities
         integrated_intensities = rh.integrate_in_range(ramanshift, intensitymap, *peakrange)
         integrated_intensities = integrated_intensities / np.max(integrated_intensities)

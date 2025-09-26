@@ -44,9 +44,9 @@ def integrate_in_range(x_arr: np.ndarray,
     hi_i = nearest_index(x_arr, hi)
     area = 0
     if y_arr.ndim == 1:
-        area = np.trapz(y_arr[low_i:hi_i], x_arr[low_i:hi_i])
+        area = np.trapezoid(y_arr[low_i:hi_i], x_arr[low_i:hi_i])
     elif y_arr.ndim == 2:
-        area = np.trapz(y_arr[:,low_i:hi_i], x_arr[low_i:hi_i])
+        area = np.trapezoid(y_arr[:,low_i:hi_i], x_arr[low_i:hi_i])
     return area
 
 
