@@ -55,7 +55,7 @@ def plot_polarized(datafile: Path,
                    peaks: dict[str, tuple[float,float]],
                    savefile=None,
                    vertical: bool = True,
-                   connect_final: bool = False,
+                   connect_points: bool = False,
                    rm_baseline: bool = False,
                    rm_baseline_lam: float = 1e5,
                    **kwargs) -> tuple[Figure, Figure]:
@@ -69,7 +69,7 @@ def plot_polarized(datafile: Path,
         }
     savefile - location to save file, or None if we don't want to.
     vertical - plots vertical guides on heatmap if True.
-    connect_final - whether we want to connect final and initial points in polar plots
+    connect_points - whether we want to connect all the points or not.
     rm_baseline - whether we want to remove baseline (uses psalsa whittaker from pybaselines)
     returns: matplotlib figures for heatmap and polar plot.
     """
@@ -103,6 +103,10 @@ def plot_polarized(datafile: Path,
         bkgs = np.array([data[0] for data in bkgs_fitters])
         intensitymap -= bkgs
 
+        # renormalizes after subtraction
+        max_intensity = np.max(intensitymap)
+        intensitymap /= max_intensity
+
     ramanshift_posts = rh.generate_posts(ramanshift)
     pol_posts = rh.connect_final_init_pt(pol_uniq, 360)
     colorbar = ax_heat.pcolormesh(ramanshift_posts, pol_posts, intensitymap)
@@ -134,11 +138,13 @@ def plot_polarized(datafile: Path,
         integrated_intensities = integrated_intensities / np.max(integrated_intensities)
         plot_pol = pol_uniq
         plot_int = integrated_intensities
-        if connect_final:
+        if connect_points:
             spacing = (pol_uniq[-1] - pol_uniq[-2])
             plot_pol = rh.connect_final_init_pt(pol_uniq, pol_uniq[-1] + spacing)
             plot_int = rh.connect_final_init_pt(integrated_intensities, integrated_intensities[0])
-        ax.plot(np.deg2rad(plot_pol), plot_int, color=c, marker='o')
+            ax.plot(np.deg2rad(plot_pol), plot_int, color=c, marker='o')
+        else:
+            ax.scatter(np.deg2rad(plot_pol), plot_int, color=c)
 
     fig_polars.tight_layout()
     ax_heat.legend(bbox_to_anchor=(1.45, 0), loc='lower right')
